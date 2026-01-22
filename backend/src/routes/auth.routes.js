@@ -1,20 +1,15 @@
-import express from express ; //Do a REST API server
+import express from 'express';
+import {
+  signupController,
+  loginController,
+  logoutController
+} from '../controllers/auth.controller.js';
 
-const router = express.Router() ;
+const router = express.Router();
 
+// post Endpoints to send informations
+router.post('/signup', signupController); 
+router.post('/login', loginController);
+router.post('/logout', logoutController);
 
-router.get ('/signup', (req, res) => {
-  res.send('Hello World!');
-});
-
-router.get ('/login', (req, res) => {
-  res.send('Hello World!');
-}); 
-
-router.get ('/logout', (req, res) => {
-  res.send('Hello World!');
-});
-
-
-
-export default router ;
+export default router;
