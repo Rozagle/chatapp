@@ -3,9 +3,9 @@ import User from '../models/User.js';
 import JWT from 'jsonwebtoken';
 
 export async function signupController(req, res) {
-  const { fullName, email, password } =  req.body;
+  const { fullname, email, password, profilePicture } =  req.body;
   try {
-    if (!fullName || !email || !password) {
+    if (!fullname || !email || !password) {
       return res.status(400).json({ message: 'All fields are required' });
     }
     if (password.length < 8) {
@@ -19,8 +19,8 @@ export async function signupController(req, res) {
       return res.status(400).json({ message: 'Email already in use' });
     }
 
-    const index = Math.floor(Math.random() * 10) + 1; // Random number between 1 and 10
-    const newUser = new User({ fullName, email, password, profilePicture: `https://avatar.iran.liara.run/public/${index}` });
+    const index = Math.floor(Math.random() * 100) + 1; // Random number between 1 and 10
+    const newUser = await User.create({ fullname, email, password, profilePicture: `https://avatar.iran.liara.run/public/${index}` });
     const token = JWT.sign({ id: newUser._id }, process.env.JWT_SECRET, { expiresIn: '7d' });  
     res.cookie('token', token, {
       httpOnly: true, // accessible only by web server  prevent  XSS attackes
@@ -28,7 +28,6 @@ export async function signupController(req, res) {
       sameSite: 'Strict',
       maxAge: 7 * 24 * 60 * 60 * 1000
     });
-    await newUser.save();
     res.status(201).json({ message: 'User registered successfully' });
   } catch (error) {
     console.error('Error during signup:', error);
