@@ -3,15 +3,15 @@ import User from '../models/User.js';
 import JWT from 'jsonwebtoken';
 
 export async function signupController(req, res) {
-  const { fullname, email, password } =  req.body;
+  const { fullName, email, password } =  req.body;
   try {
-    if (!fullname || !email || !password) {
+    if (!fullName || !email || !password) {
       return res.status(400).json({ message: 'All fields are required' });
     }
     if (password.length < 8) {
       return res.status(400).json({ message: 'Password must be at least 8 characters long' });
     }
-    const emailPattern = "^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$"; 
+    const emailPattern = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/;
     if (!emailPattern.test(email)) {
       return res.status(400).json({ message: 'Invalid email format' });
     }
@@ -20,7 +20,7 @@ export async function signupController(req, res) {
     }
 
     const index = Math.floor(Math.random() * 10) + 1; // Random number between 1 and 10
-    const newUser = new User({ fullname, email, password, profilePicture: `https://avatar.iran.liara.run/public/${index}` });
+    const newUser = new User({ fullName, email, password, profilePicture: `https://avatar.iran.liara.run/public/${index}` });
     const token = JWT.sign({ id: newUser._id }, process.env.JWT_SECRET, { expiresIn: '7d' });  
     res.cookie('token', token, {
       httpOnly: true, // accessible only by web server  prevent  XSS attackes
