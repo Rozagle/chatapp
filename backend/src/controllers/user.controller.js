@@ -52,6 +52,8 @@ export async function sendFriendRequest(req, res) {
             return res.status(400).json({ message: 'You cannot send a friend request to yourself.' });
         }
 
+
+
         // Check if a friend request already exists
         const existingRequest = await FriendRequest.findOne({
             $or: [
@@ -64,6 +66,11 @@ export async function sendFriendRequest(req, res) {
             return res.status(400).json({ message: 'Friend request already sent.' });
         }
 
+        if (existingRequest) {
+            if (existingRequest.status === 'rejected') {
+                return res.status(400).json({ message: 'Unable to send friend request.' }); // Keeps it vague for privacy, or say "Request was rejected"
+            }
+        }
         // Create a new friend request
         const newFriendRequest = await FriendRequest({
             requester: currentUserId,
@@ -136,4 +143,26 @@ export async function outgoingFriendRequest(req, res) {
     } catch (error) {
         res.status(500).json({ message: 'Server error', error: error.message });
     }
+}
+
+export async function rejectFriendRequest(req, res) {
+    try {
+        const currentUserId = req.user._id;
+        const { id : requesterId } = req.params;
+        // Find the friend request
+        const friendRequest = await FriendRequest.findOne({
+            requester: requesterId,
+            recipient: currentUserId,
+            status: 'pending'
+        });     
+        if (!friendRequest) {
+            return res.status(404).json({ message: 'Friend request not found.' });
+        }
+        // Update the friend request to be rejected
+        friendRequest.status = 'rejected';
+        await friendRequest.save();     
+        res.status(200).json({ message: 'Friend request rejected successfully.' });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }   
 }
