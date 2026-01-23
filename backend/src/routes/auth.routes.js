@@ -16,5 +16,7 @@ router.post('/logout', logoutController);
 
 router.post('/enrollment', protectRoute, enrollmentController); // Protected route add cause should protect in middleware
 
-
+//forget password 
+//send reset password mail 
+// ikisinide sonra ekle
 export default router;
