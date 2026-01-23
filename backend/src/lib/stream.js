@@ -19,5 +19,11 @@ export const upsertUser = async (userData) => {
   }
 };
 export const generateStreamToken = (userId) => {
-  return streamClient.createToken(userId);
+  try {
+    // Stream Chat requires user IDs to be strings
+    const  userIdStr = String(userId);
+    return streamClient.createToken(userIdStr);
+  } catch (error) {
+    console.error('Error generating Stream token:', error.message);
+  }
 };

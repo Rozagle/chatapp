@@ -3,6 +3,7 @@ import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 import authRoutes from './routes/auth.routes.js';
 import userRoutes from './routes/user.routes.js';
+import chatRoutes from './routes/chat.routes.js';
 import { connectDB } from './DB/db.js';
 import dns from 'dns';
 dns.setServers(["1.1.1.1"]);
@@ -18,6 +19,8 @@ app.use(cookieParser());
 
 app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
+app.use('/api/chat', chatRoutes);
+
 
 
 app.listen(PORT, () => {
