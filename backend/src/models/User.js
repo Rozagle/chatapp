@@ -10,7 +10,7 @@ const userSchema = new mongoose.Schema({
   learningLanguages: { type: [String], default: [] },
   location: { type: String, default: "" },
   isOnboarding: { type: Boolean, default: false },
-  friends: { type: [mongoose.Schema.Types.ObjectId], ref: "User", default: [] },
+  contact: { type: [mongoose.Schema.Types.ObjectId], ref: "User", default: [] },
 }, { timestamps: true });
 
 // Password hashleme (async/await)

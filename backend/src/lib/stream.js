@@ -14,7 +14,7 @@ export const upsertUser = async (userData) => {
   try {
     // If the user already exists, update them; otherwise create them
     return await streamClient.upsertUser(userData);
-  } catch (error) {
+    } catch (error) {
     console.error('Error creating Stream user:', error.message);
   }
 };

@@ -27,8 +27,8 @@ export async function signupController(req, res) {
     // Create Stream user (Realtime chat video calls)
     await upsertUser({
       id: newUser._id,
-      name: fullname,
-      profilePicture: profilePicture || `https://avatar.iran.liara.run/public/${index}`
+      name: newUser.fullname,
+      profilePicture: newUser.profilePicture || `https://avatar.iran.liara.run/public/${index}`
     });
     console.log('Stream user created/updated for', newUser.fullname, 'successfully');
   } catch (error) {
@@ -92,9 +92,47 @@ export async function logoutController(req, res) {
 export async function enrollmentController(req, res) {
 
   const userId = req.user._id;  
+  const { fullname , bio, language , learningLanguages , location } = req.body;
 
-  const { fullname , bio, launguage , location } = req.body;
+  if(!fullname || !bio || !language || !learningLanguages || !location) {
+    return res.status(400).json({ 
+      message: 'All fields are required', 
+      missingFields: [
+        !fullname && 'fullname',
+        !bio && 'bio',
+        !language && 'language',
+        !learningLanguages && 'learningLanguages',
+        !location && 'location' ].filter(Boolean) // filter out falsy values if any value already exists then it will not be included and not get displayed as false in response json  
+    });
+  }
 
+  const UpdateUser =await User.findOneAndUpdate(
+    { _id: userId },
+    {
+      ...req.body,
+      isOnboarding: true
+    },
+    { new: true }
+  );
+
+  if(!UpdateUser) {
+    return res.status(404).json({ message: 'User not found' });
+  }
+
+
+  try{
+    // Update Stream user (Realtime chat video calls)
+    await upsertUser({
+    id: UpdateUser._id,
+    name: UpdateUser.fullname,
+    profilePicture: UpdateUser.profilePicture || ""
+  });
+  console.log('Stream user updated for', UpdateUser.fullname, 'successfully');
+  }
+  catch (error) {
+    console.error('Error updating Stream user during enrollment:', error);
+  }
+  res.status(200).json({ message: 'Enrollment completed successfully', user: UpdateUser });
   try{}catch (error) {
     console.error('Error during enrollment:', error);
     res.status(500).json({ message: 'Internal server error' });

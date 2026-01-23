@@ -3,7 +3,7 @@ import {
   signupController,
   loginController,
   logoutController,
-
+  enrollmentController
 } from '../controllers/auth.controller.js';
 import { protectRoute } from '../middleware/auth.middleware.js';
 
@@ -14,6 +14,7 @@ router.post('/signup', signupController);
 router.post('/login', loginController);
 router.post('/logout', logoutController);
 
-router.post('/enrollment', protectRoute, enrollmentController);
+router.post('/enrollment', protectRoute, enrollmentController); // Protected route add cause should protect in middleware
+
 
 export default router;
