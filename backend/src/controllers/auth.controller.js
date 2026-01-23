@@ -1,6 +1,7 @@
 // we use promises then we do all asychronous operations
 import User from '../models/User.js';
 import JWT from 'jsonwebtoken';
+import { upsertUser } from '../lib/stream.js';
 
 export async function signupController(req, res) {
   const { fullname, email, password, profilePicture } =  req.body;
@@ -21,6 +22,20 @@ export async function signupController(req, res) {
 
     const index = Math.floor(Math.random() * 100) + 1; // Random number between 1 and 10
     const newUser = await User.create({ fullname, email, password, profilePicture: `https://avatar.iran.liara.run/public/${index}` });
+
+    try{
+    // Create Stream user (Realtime chat video calls)
+    await upsertUser({
+      id: newUser._id,
+      name: fullname,
+      profilePicture: profilePicture || `https://avatar.iran.liara.run/public/${index}`
+    });
+    console.log('Stream user created/updated for', newUser.fullname, 'successfully');
+  } catch (error) {
+    console.error('Error creating Stream user:', error);
+  }
+
+    // Create JWT token
     const token = JWT.sign({ id: newUser._id }, process.env.JWT_SECRET, { expiresIn: '7d' });  
     res.cookie('token', token, {
       httpOnly: true, // accessible only by web server  prevent  XSS attackes
@@ -73,3 +88,15 @@ export async function logoutController(req, res) {
   res.clearCookie('token');
   res.status(200).json({ message: 'Logout successful' });
 }   
+
+export async function enrollmentController(req, res) {
+
+  const userId = req.user._id;  
+
+  const { fullname , bio, launguage , location } = req.body;
+
+  try{}catch (error) {
+    console.error('Error during enrollment:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+}
