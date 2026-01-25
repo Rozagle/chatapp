@@ -16,6 +16,9 @@ router.post('/logout', logoutController);
 
 router.post('/enrollment', protectRoute, enrollmentController); // Protected route add cause should protect in middleware
 
+router.get('/test', protectRoute, (req, res) => {
+  res.status(200).json({ message: 'You have accessed a protected route', user: req.user });
+});
 //forget password 
 //send reset password mail 
 // ikisinide sonra ekle

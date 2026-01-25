@@ -2,10 +2,10 @@ import toast from 'react-hot-toast'
 
 const HomePage = () => {
   return (
-    <div data-theme="retro" className="min-h-screen flex items-center justify-center">
+    <div data-theme="cyberpunk" className="min-h-screen flex items-center justify-center">
       <h1 className="text-4xl font-bold">
 
-        HOME PAGE (RETRO)
+        HOME PAGE (CYBERPUNK)
       </h1>
 <button
   onClick={() => toast.success("hellooo")}
