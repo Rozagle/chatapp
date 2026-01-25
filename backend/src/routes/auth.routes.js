@@ -3,7 +3,7 @@ import {
   signupController,
   loginController,
   logoutController,
-  enrollmentController
+  OnboardingController
 } from '../controllers/auth.controller.js';
 import { protectRoute } from '../middleware/auth.middleware.js';
 
@@ -13,8 +13,7 @@ const router = express.Router();
 router.post('/signup', signupController); 
 router.post('/login', loginController);
 router.post('/logout', logoutController);
-
-router.post('/enrollment', protectRoute, enrollmentController); // Protected route add cause should protect in middleware
+router.post('/onboarding', protectRoute, OnboardingController); // Protected route add cause should protect in middleware
 
 router.get('/test', protectRoute, (req, res) => {
   res.status(200).json({ message: 'You have accessed a protected route', user: req.user });

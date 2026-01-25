@@ -12,7 +12,7 @@ const SignUpPage = () => {
     password: "",
   });
 
-  const navigate = useNavigate(); // 2. Hook'u başlat
+  const navigate = useNavigate(); 
   const queryClient = useQueryClient();
 
   const { mutate: signUpMutate, isPending } = useMutation({
