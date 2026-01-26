@@ -1,33 +1,30 @@
-import { useQuery } from '@tanstack/react-query'
-import axiosINSTANCE from '../lib/axios'
-import { Navigate, Outlet, useLocation } from 'react-router-dom'
+import { Navigate, Outlet, useLocation } from "react-router-dom";
+import { useAuthUser } from "../Hooks/useAuthUser.jsx";
 
 export default function ProtectedLayout() {
-  const location = useLocation()
-  const { data, isLoading, error } = useQuery({
-    queryKey: ['authUser'],
-    queryFn: async () => (await axiosINSTANCE.get('/auth/test')).data,
-    retry: false,
-  })
+  const location = useLocation();
+  const { authUser, isLoading, isError } = useAuthUser();
+  const isOnboarding = authUser?.isOnboarding;
+  console.log("authUser:", authUser);
+  console.log("isOnboarding:", isOnboarding);
+  if (isLoading)
+    return (
+      <div className="flex items-center justify-center h-screen">
+        Loading...
+      </div>
+    );
 
-  const authUser = data?.user
-  const isOnboarding = authUser?.isOnboarding
-  console.log("authUser:", authUser)
-  console.log("isOnboarding:", isOnboarding)
-
-  if (isLoading) return <div>Loading...</div>
-
-  if (error || !authUser) {
-    return <Navigate to="/login" replace />
+  if (isError || !authUser) {
+    return <Navigate to="/login" replace />;
   }
 
-  if (!isOnboarding && location.pathname !== '/onboarding') {
-    return <Navigate to="/onboarding" replace />
+  if (!isOnboarding && location.pathname !== "/onboarding") {
+    return <Navigate to="/onboarding" replace />;
   }
 
-  if (isOnboarding && location.pathname === '/onboarding') {
-    return <Navigate to="/" replace />
+  if (isOnboarding && location.pathname === "/onboarding") {
+    return <Navigate to="/" replace />;
   }
 
-  return <Outlet />
+  return <Outlet />;
 }

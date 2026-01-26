@@ -6,8 +6,9 @@ import NotificationPage from './pages/NotificationPage';
 import HomePage from './pages/HomePage';
 import SignUpPage from './pages/SignUpPage';
 import LoginPage from './pages/LoginPage';
-import CallPage from './pages/callPage';       
-import ChatPage from './pages/chatPage';       
+import CallPage from './pages/CallPage';       
+import ChatPage from './pages/ChatPage';  
+import FriendsPage from './pages/Friends';     
 import ProtectedLayout from './lib/ProtectedLayout';  
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
           <Route path="call" element={<CallPage />} />
           <Route path="chat" element={<ChatPage />} />
           <Route path="notifications" element={<NotificationPage />} />
+          <Route path="friends" element={<FriendsPage  />} /> 
         </Route>
 
         {/* 404 */}
