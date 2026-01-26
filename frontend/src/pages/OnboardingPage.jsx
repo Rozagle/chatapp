@@ -33,10 +33,10 @@ const OnboardingPage = () => {
     age: "",
     gender: "",
     location: "",
-    nativeLanguage: "",
-    learningLanguage: "",
+    language: "",
+    learningLanguages: [], // String yerine boş dizi yapman daha sağlıklı
     interests: [],
-    profilePicture: `https://api.dicebear.com/7.x/avataaars/svg?seed=${Math.random()}`,
+    profilePicture: `https://avatar.iran.liara.run/public/${Math.floor(Math.random() * 100) + 1}`,
   }));
 
   // Ayı göz takibi
@@ -45,10 +45,9 @@ const OnboardingPage = () => {
 
   // Avatar yenileme
   const refreshAvatar = () => {
-    const randomSeed = Math.random().toString(36).substring(7);
     setFormData(prev => ({
       ...prev,
-      profilePicture: `https://api.dicebear.com/7.x/avataaars/svg?seed=${randomSeed}`
+      profilePicture: `https://avatar.iran.liara.run/public/${Math.floor(Math.random() * 100) + 1}`,
     }));
   };
 
@@ -69,9 +68,11 @@ const OnboardingPage = () => {
   };
 
   // Backend güncelleme
-  const { mutate: updateProfile, isPending } = useMutation({
+  const { mutate: UpdateUser, isPending } = useMutation({
     mutationFn: async (data) => {
-      const response = await axiosINSTANCE.post("/users/profile", data);
+            console.log("Onboarding response:", data);
+
+      const response = await axiosINSTANCE.post("/auth/onboarding", data);
       return response.data;
     },
     onSuccess: () => {
@@ -86,7 +87,7 @@ const OnboardingPage = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    updateProfile(formData);
+    UpdateUser(formData);
   };
 
   const getLanguageName = (code) => LANGUAGES.find(l => l.code === code)?.name || "Select Language";
@@ -244,7 +245,7 @@ const OnboardingPage = () => {
                 <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Native Language</label>
                 <div className="dropdown w-full">
                   <div tabIndex={0} role="button" className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl flex justify-between items-center text-sm font-medium text-slate-800 hover:bg-white hover:border-gray-300 transition-colors cursor-pointer">
-                    <span className="truncate">{getLanguageName(formData.nativeLanguage)}</span>
+                    <span className="truncate">{getLanguageName(formData.language)}</span>
                     <svg className="w-4 h-4 text-gray-400 flex-shrink-0 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
                     </svg>
@@ -257,11 +258,11 @@ const OnboardingPage = () => {
                           key={lang.code}
                           type="button"
                           onClick={() => {
-                            handleChange({ target: { name: "nativeLanguage", value: lang.code } });
+                            handleChange({ target: { name: "language", value: lang.code } });
                             document.activeElement.blur();
                           }}
                           className={`text-left px-3 py-2 rounded-lg text-sm transition-colors ${
-                            formData.nativeLanguage === lang.code
+                            formData.language === lang.code
                               ? "bg-black text-yellow-400 font-bold"
                               : "text-slate-600 hover:bg-yellow-50 hover:text-slate-900"
                           }`}
@@ -279,7 +280,7 @@ const OnboardingPage = () => {
                 <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Learning Language</label>
                 <div className="dropdown w-full">
                   <div tabIndex={0} role="button" className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl flex justify-between items-center text-sm font-medium text-slate-800 hover:bg-white hover:border-gray-300 transition-colors cursor-pointer">
-                    <span className="truncate">{getLanguageName(formData.learningLanguage)}</span>
+                    <span className="truncate">{getLanguageName(formData.learningLanguages)}</span>
                     <svg className="w-4 h-4 text-gray-400 flex-shrink-0 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
                     </svg>
@@ -292,11 +293,11 @@ const OnboardingPage = () => {
                           key={lang.code}
                           type="button"
                           onClick={() => {
-                            handleChange({ target: { name: "learningLanguage", value: lang.code } });
+                            handleChange({ target: { name: "learningLanguages", value: lang.code } });
                             document.activeElement.blur();
                           }}
                           className={`text-left px-3 py-2 rounded-lg text-sm transition-colors ${
-                            formData.learningLanguage === lang.code
+                            formData.learningLanguages === lang.code
                               ? "bg-black text-yellow-400 font-bold"
                               : "text-slate-600 hover:bg-yellow-50 hover:text-slate-900"
                           }`}

@@ -23,7 +23,7 @@ const SignUpPage = () => {
     onSuccess: () => {
       // Başarılı olduğunda veriyi yenile
       queryClient.invalidateQueries({ queryKey: ["authUser"] });
-            navigate("/"); // 3. Başarılı kayıt sonrası ana sayfaya yönlendir
+            navigate("/onboarding"); // 3. Başarılı kayıt sonrası ana sayfaya yönlendir
       toast.success("Hesap oluşturuldu, giriş yapılıyor...");
     },
     onError: (error) => {

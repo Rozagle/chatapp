@@ -98,7 +98,9 @@ export async function logoutController(req, res) {
 
 export async function OnboardingController(req, res) {
   const userId = req.user._id;
-  const { fullname, bio, language, learningLanguages, location } = req.body;
+  const { bio, language, learningLanguages, location } = req.body;
+
+    const fullname = req.body.fullname || req.user.fullname;
 
   if (!fullname || !bio || !language || !learningLanguages || !location) {
     return res.status(400).json({
@@ -117,7 +119,9 @@ export async function OnboardingController(req, res) {
 const UpdateUser =await User.findOneAndUpdate(
     { _id: userId },
     {
+      fullname,
       ...req.body,
+      learningLanguages: Array.isArray(learningLanguages) ? learningLanguages : [learningLanguages],
       isOnboarding: true
     },
     { new: true }

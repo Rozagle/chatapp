@@ -1,6 +1,52 @@
 import User from '../models/User.js';
 import FriendRequest from '../models/FriendRequest.js';
+import { upsertUser } from '../lib/stream.js';
 
+export const updateProfile = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const { fullname, bio, language, learningLanguages, location, profilePicture } = req.body;
+
+
+const updateData = {
+      fullname,
+      bio,
+      language: language || nativeLanguage, 
+      learningLanguages: learningLanguages || (learningLanguage ? [learningLanguage] : undefined),
+      location,
+      profilePicture,
+      isOnboarding: true 
+    };
+    // undefined olanları temizle
+    // Object.keys(updateData).forEach(key => updateData[key] === undefined && delete updateData[key]);
+ if (!updateData.fullname) {
+        const user = await User.findById(userId);
+        updateData.fullname = user.fullname;
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { $set: updateData },
+      { new: true, runValidators: true }
+    );
+    
+    if (!updatedUser) return res.status(404).json({ message: "User not found" });
+
+    // Stream Güncelleme
+    try {
+      await upsertUser({
+        id: updatedUser._id,
+        name: updatedUser.fullname,
+        image: updatedUser.profilePicture,
+      });
+    } catch (err) { console.error("Stream error:", err); }
+
+    res.status(200).json(updatedUser);
+  } catch (error) {
+    if (error.code === 11000) return res.status(400).json({ message: "Fullname already exists" });
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
 
 
 export async function getRecomendedUsers(req, res) {
