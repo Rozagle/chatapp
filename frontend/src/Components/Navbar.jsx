@@ -2,9 +2,17 @@ import { Link, useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axiosINSTANCE from "../lib/axios.js";
 import toast from "react-hot-toast";
-import { Bell, LogOut, User, Palette, ChevronDown } from "lucide-react";
+import {
+  UsersRound,
+  Bell,
+  LogOut,
+  User,
+  Palette,
+  ChevronDown,
+} from "lucide-react";
 import { useAuthUser } from "../Hooks/useAuthUser.jsx";
 import Theme from "./Theme.jsx";
+
 const Navbar = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -96,6 +104,24 @@ const Navbar = () => {
       </Link>
 
       <div className="flex items-center gap-3 sm:gap-4">
+        {/* Connections Linki */}
+        <Link
+          to="/friends"
+          className="flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-gray-100 transition-all group"
+          title="Connections"
+        >
+          <div className="relative">
+            <UsersRound
+              size={24}
+              className="group-hover:text-black transition-colors"
+            />
+            <span className="absolute -top-1 -right-1 w-2 h-2 bg-yellow-400 border border-black rounded-full"></span>
+          </div>
+          <span className="hidden md:block font-black uppercase italic text-sm tracking-tighter">
+            Connections
+          </span>
+        </Link>
+
         {/* Theme Selector Component */}
 
         <Theme />
@@ -126,10 +152,12 @@ const Navbar = () => {
               />
             ) : (
               <img
-                src={avatars.map((avatar, index) => ({
-                  avatar,
-                  index,
-                }))[authUser?.avatarIndex || 0].avatar}
+                src={
+                  avatars.map((avatar, index) => ({
+                    avatar,
+                    index,
+                  }))[authUser?.avatarIndex || 0].avatar
+                }
                 alt="avatar"
                 className="w-full h-full object-cover"
               />
